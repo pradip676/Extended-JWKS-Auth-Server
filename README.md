@@ -10,6 +10,21 @@ This project extends a basic JSON Web Key Set (JWKS) server by integrating **SQL
 - **Comprehensive test suite** ensuring over 80% test coverage
 - **Gradebot compatibility** for validation
 
+## Project Structure
+```
+  -------------- jwks_server --------------
+                    |         
+  --------------------------------------------
+  |                 |                        |  
+ server/          tests/                 (root files)
+  |                 |                        |
+  |                 |              --------------------------------
+  |                 |             |      |            |           |
+ __init__.py  test_jwks_server.py |    README.md      |     gradebot and its ss
+ db_manager.py                    run.py          SS of test Coverage
+ jwks_server.py
+```
+
 ## Installation & Setup
 
 ### Prerequisites
@@ -26,6 +41,12 @@ pip3 install flask cryptography pyjwt pytest pytest-cov flake8 sqlite3
 git clone https://github.com/pradip676/Extended-JWKS-Auth-Server.git  
 cd Extended-JWKS-Auth-Server  
 ```
+## Linting
+Ensured the code follows PEP8 guidelines using flake8:
+```bash
+flake8 .
+```
+
 ### Initialize the Database & Run the Server
 ```bash
 python3 run.py
@@ -35,21 +56,6 @@ or,
 python run.py
 ```
 The server will start on `http://127.0.0.1:8080`
-
-## Project Structure
-```
--------------- jwks_server --------------
-                    |         
-  --------------------------------------------
-  |                 |                        |  
- server/          tests/                 (root files)
-  |                 |                        |
-  |                 |              --------------------------------
-  |                 |             |      |            |           |
- __init__.py  test_jwks_server.py |    README.md      |     gradebot and its ss
- db_manager.py                    run.py          SS of test Coverage
- jwks_server.py
-```
 
 
 ### Endpoints
@@ -93,12 +99,6 @@ server/db_manager.py       34      0   100%
 server/jwks_server.py      40      7    82%
 -------------------------------------------
 TOTAL                      74      7    91%
-```
-
-## Linting
-Ensured the code follows PEP8 guidelines using flake8:
-```bash
-flake8 .
 ```
 
 ## Testing the Server Manually
