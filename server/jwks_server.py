@@ -4,7 +4,7 @@ import base64
 from flask import Flask, request, jsonify
 from cryptography.hazmat.primitives import serialization
 
-# Import DB functions from db_manager.py
+# Import database functions from db_manager
 from .db_manager import get_rsa_key, fetch_valid_keys
 
 app = Flask(__name__)
@@ -12,33 +12,27 @@ app = Flask(__name__)
 # /auth endpoint: creates a JWT token
 @app.route('/auth', methods=['POST'])
 def post_token():
-    # Check if the request is JSON
     if not request.is_json:
         return jsonify({'error': 'Invalid content type'}), 415
 
-    # Get the JSON data from the request
     req_body = request.get_json()
-    # Check if the 'expired' parameter is set
     want_expired = request.args.get('expired', 'false').lower() == 'true'
 
-    # Get the username from the JSON data
     try:
         username = req_body['username']
     except KeyError:
         return jsonify({'error': 'Missing username field'}), 400
 
-    # Get an RSA key from the database (expired or valid)
     key_id, rsa_priv = get_rsa_key(get_expired=want_expired)
     if not rsa_priv:
         return jsonify({'error': 'No suitable key found'}), 404
 
-    # Set current time and calculate token expiration time
     current_time = datetime.datetime.now(datetime.timezone.utc)
-    token_exp = current_time + datetime.timedelta(hours=1)  # token valid for 1 hour
-    if want_expired:
-        token_exp = current_time - datetime.timedelta(minutes=5)  # token already expired
+    token_exp = current_time + datetime.timedelta(hours=1)  # Standard expiration
 
-    # Create and return the JWT
+    if want_expired:
+        token_exp = current_time - datetime.timedelta(minutes=5)  # Already expired
+
     try:
         token = jwt.encode(
             {'sub': username, 'iat': current_time, 'exp': token_exp},
