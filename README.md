@@ -93,7 +93,7 @@ TOTAL                      74      7    91%
 ```
 
 ## Linting
-Ensure the code follows PEP8 guidelines using flake8:
+Ensured the code follows PEP8 guidelines using flake8:
 ```bash
 flake8 .
 ```
