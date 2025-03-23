@@ -10,7 +10,7 @@ This project extends a basic JSON Web Key Set (JWKS) server by integrating **SQL
 - **Comprehensive test suite** ensuring over 80% test coverage
 - **Gradebot compatibility** for validation
 
-## Installation
+## Installation & Setup
 
 ### Prerequisites
 Ensure you have SQLite and required dependencies installed:
@@ -21,6 +21,20 @@ or,
 ```bash
 pip3 install flask cryptography pyjwt pytest pytest-cov flake8 sqlite3
 ```
+### Clone the Repository
+```bash
+git clone https://github.com/pradip676/Extended-JWKS-Auth-Server.git  
+cd Extended-JWKS-Auth-Server  
+```
+### Initialize the Database & Run the Server
+```bash
+python3 run.py
+```
+or,
+```bash
+python run.py
+```
+The server will start on `http://127.0.0.1:8080`
 
 ## Project Structure
 ```
@@ -37,17 +51,6 @@ pip3 install flask cryptography pyjwt pytest pytest-cov flake8 sqlite3
  jwks_server.py
 ```
 
-## Usage
-
-### Run the Server
-```bash
-python3 run.py
-```
-or,
-```bash
-python run.py
-```
-The server will start on `http://127.0.0.1:8080`
 
 ### Endpoints
 
