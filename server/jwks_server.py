@@ -9,6 +9,7 @@ from .db_manager import get_rsa_key, fetch_valid_keys
 
 app = Flask(__name__)
 
+
 # /auth endpoint: creates a JWT token
 @app.route('/auth', methods=['POST'])
 def post_token():
@@ -28,10 +29,10 @@ def post_token():
         return jsonify({'error': 'No suitable key found'}), 404
 
     current_time = datetime.datetime.now(datetime.timezone.utc)
-    token_exp = current_time + datetime.timedelta(hours=1)  # Standard expiration
+    token_exp = current_time + datetime.timedelta(hours=1)
 
     if want_expired:
-        token_exp = current_time - datetime.timedelta(minutes=5)  # Already expired
+        token_exp = current_time - datetime.timedelta(minutes=5)
 
     try:
         token = jwt.encode(
@@ -44,6 +45,7 @@ def post_token():
     except Exception:
         return jsonify({'error': 'Token generation failed'}), 500
 
+
 # /well-known/jwks.json endpoint: returns public keys in JWKS format
 @app.route('/.well-known/jwks.json', methods=['GET'])
 def serve_jwks():
@@ -52,7 +54,8 @@ def serve_jwks():
     valid_keys = fetch_valid_keys()
     for kid, key_data in valid_keys:
         # Load the private key from the DB and get its public key numbers
-        private_key = serialization.load_pem_private_key(key_data, password=None)
+        private_key = serialization.load_pem_private_key(
+            key_data, password=None)
         public_numbers = private_key.public_key().public_numbers()
         # Convert modulus and exponent to bytes
         n_bytes = public_numbers.n.to_bytes(256, 'big')

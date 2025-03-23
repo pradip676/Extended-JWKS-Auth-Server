@@ -1,4 +1,5 @@
-# This program sets up the SQLite database, generates RSA keys for JWT authentication,
+# This program sets up the SQLite database,
+# generates RSA keys for JWT authentication,
 # and runs a JWKS server using Flask.
 
 from server.jwks_server import app
