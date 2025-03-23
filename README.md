@@ -32,7 +32,7 @@ pip3 install flask cryptography pyjwt pytest pytest-cov flake8 sqlite3
   |                 |                        |
   |                 |              --------------------------------
   |                 |             |      |            |           |
- __init__.py  test_jwks_server.py |    README.md      |     SS of Gradebot
+ __init__.py  test_jwks_server.py |    README.md      |     gradebot and its ss
  db_manager.py                    run.py          SS of test Coverage
  jwks_server.py
 ```
