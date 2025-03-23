@@ -134,9 +134,9 @@ Sample output:
 
 ## Run the test client
 ```bash
-cd ~/Downloads/CSCE3550_Darwin_arm64
 ./gradebot project2
 ```
+The test client will check for the **DB file** in the current directory, so ensure the client can access it.
 
 ## Gradebot output
 ```
