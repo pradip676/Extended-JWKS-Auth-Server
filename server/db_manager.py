@@ -3,6 +3,7 @@ import datetime
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 
+# Name of the SQLite database file
 DB_FILE = "totally_not_my_privateKeys.db"
 
 
@@ -22,6 +23,7 @@ def setup_database():
 
 # Store a PEM-encoded RSA key and its expiration timestamp in the database
 def store_rsa_key(rsa_obj, expiry):
+    # Convert RSA obj into PEM format
     pem_data = rsa_obj.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -33,11 +35,14 @@ def store_rsa_key(rsa_obj, expiry):
         )
 
 
-# Retrieve a single RSA key from the database;
-# if get_expired is True, return an expired key;
+# Retrieve a single RSA key from the database,
+# if get_expired is True, return an expired key,
 # otherwise, return a valid (unexpired) key.
 def get_rsa_key(get_expired=False):
+    # Get current time in UTC
     now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
+
+    #SQL to select valid or expired keys
     query = '''
         SELECT kid, key FROM keys
         WHERE exp {} ?
@@ -53,8 +58,8 @@ def get_rsa_key(get_expired=False):
         rsa_key = serialization.load_pem_private_key(
             record[1], password=None
         )
-        return kid, rsa_key
-    return None, None
+        return kid, rsa_key # Return key id and secret key obj
+    return None, None # for no key found
 
 
 # Generate and store two RSA keys:
@@ -62,6 +67,7 @@ def get_rsa_key(get_expired=False):
 def generate_and_save_keys():
     now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
+    # Generate RSA private key
     valid_key = rsa.generate_private_key(
         public_exponent=65537,
         key_size=2048,
@@ -71,7 +77,10 @@ def generate_and_save_keys():
         key_size=2048,
     )
 
+    # Store valid key with expiry of 1hr from now
     store_rsa_key(valid_key, now_ts + 3600)
+
+    # Store expired key with expiry 1hr ago
     store_rsa_key(expired_key, now_ts - 3600)
 
 
@@ -83,4 +92,4 @@ def fetch_valid_keys():
         cursor = connection.execute(
             'SELECT kid, key FROM keys WHERE exp > ?', (now_ts,)
         )
-        return cursor.fetchall()
+        return cursor.fetchall() #Return all valid keys

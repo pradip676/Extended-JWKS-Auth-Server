@@ -69,38 +69,6 @@ The server will start on `http://127.0.0.1:8080`
 - `POST /auth?expired=true` – Returns an expired JWT.
 - Invalid methods (GET, PUT, DELETE, PATCH, HEAD) – Returns `405 Method Not Allowed`.
 
-## Testing
-
-### Run Tests
-
-### Run Tests with Coverage
-```bash
-python3 -m pytest --cov=server --cov-report=term tests/
-```
-or, 
-```bash
-python -m pytest --cov=server --cov-report=term tests/
-```
-
-### Test Coverage Result
-```
-platform darwin -- Python 3.12.5, pytest-8.3.4, pluggy-1.5.0
-rootdir: /Users/pradipsapkota/Documents/Extended-JWKS-Auth-Server
-plugins: cov-6.0.0
-collected 9 items                                                                                                                                                                                   
-
-tests/test_jwks_server.py .........
-
----------- coverage: platform darwin, python 3.12.5-final-0 ----------
-Name                    Stmts   Miss  Cover
--------------------------------------------
-server/__init__.py          0      0   100%
-server/db_manager.py       34      0   100%
-server/jwks_server.py      40      7    82%
--------------------------------------------
-TOTAL                      74      7    91%
-```
-
 ## Testing the Server Manually
 
 ### 1. Get a Valid JWT:
@@ -133,6 +101,38 @@ Sample output:
     }  
   ]  
 }  
+```
+
+## Testing
+
+### Run Tests
+
+### Run Tests with Coverage
+```bash
+python3 -m pytest --cov=server --cov-report=term tests/
+```
+or, 
+```bash
+python -m pytest --cov=server --cov-report=term tests/
+```
+
+### Test Coverage Result
+```
+platform darwin -- Python 3.12.5, pytest-8.3.4, pluggy-1.5.0
+rootdir: /Users/pradipsapkota/Documents/Extended-JWKS-Auth-Server
+plugins: cov-6.0.0
+collected 9 items                                                                                                                                                                                   
+
+tests/test_jwks_server.py .........
+
+---------- coverage: platform darwin, python 3.12.5-final-0 ----------
+Name                    Stmts   Miss  Cover
+-------------------------------------------
+server/__init__.py          0      0   100%
+server/db_manager.py       34      0   100%
+server/jwks_server.py      40      7    82%
+-------------------------------------------
+TOTAL                      74      7    91%
 ```
 
 ## Run the test client
