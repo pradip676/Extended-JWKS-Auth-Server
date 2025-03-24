@@ -191,6 +191,33 @@ class TestJWKSApp(unittest.TestCase):
             "fetch_valid_keys should return only unexpired keys."
         )
 
+    def test_invalid_methods_jwks(self):
+        """
+        Test invalid HTTP methods (POST, PUT, DELETE, PATCH) on JWKS endpoint
+        """
+        invalid_methods = ['POST', 'PUT', 'DELETE', 'PATCH']
+        for method in invalid_methods:
+            response = self.client.open(
+                '/.well-known/jwks.json', method=method
+            )
+            self.assertEqual(
+                response.status_code, 405,
+                f"{method} on JWKS should return 405."
+            )
+
+    def test_invalid_methods_auth(self):
+        """
+        Test invalid HTTP methods (GET, PUT, DELETE, PATCH, HEAD)
+        on /auth endpoint
+        """
+        invalid_methods = ['GET', 'PUT', 'DELETE', 'PATCH']
+        for method in invalid_methods:
+            response = self.client.open('/auth', method=method)
+            self.assertEqual(
+                response.status_code, 405,
+                f"{method} on /auth should return 405."
+            )
+
 
 if __name__ == '__main__':
     unittest.main()

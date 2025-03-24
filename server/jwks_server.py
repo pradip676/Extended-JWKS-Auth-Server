@@ -1,7 +1,7 @@
 import datetime
 import jwt
 import base64
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from cryptography.hazmat.primitives import serialization
 
 # Import database functions from db_manager
@@ -51,6 +51,17 @@ def post_token():
         return jsonify({'error': 'Token generation failed'}), 500
 
 
+# Handles invalid methods for JWKS endpoint
+@app.route(
+        '/.well-known/jwks.json',
+        methods=['POST', 'PUT', 'DELETE', 'PATCH']
+    )
+def jwks_invalid():
+    return make_response(
+        jsonify({'message': 'Method Not Allowed'}), 405
+    )
+
+
 @app.route('/.well-known/jwks.json', methods=['GET'])
 def serve_jwks():
     """
@@ -77,3 +88,11 @@ def serve_jwks():
             'e': base64.urlsafe_b64encode(e_bytes).decode().rstrip('=')
         })
     return jsonify({'keys': jwks_keys})
+
+
+# Handle invalid method for auth endpoint
+@app.route('/auth', methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+def auth_invalid():
+    return make_response(
+        jsonify({'message': 'Method Not Allowed'}), 405
+    )

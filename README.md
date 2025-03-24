@@ -121,21 +121,21 @@ python -m pytest --cov=server --cov-report=term tests/
 platform darwin -- Python 3.12.5, pytest-8.3.4, pluggy-1.5.0
 rootdir: /Users/pradipsapkota/Documents/Extended-JWKS-Auth-Server
 plugins: cov-6.0.0
-collected 9 items                                                                                                                                                                                   
+collected 11 items                                                                                                                                                                                  
 
-tests/test_jwks_server.py .........
+tests/test_jwks_server.py ...........
 
 ---------- coverage: platform darwin, python 3.12.5-final-0 ----------
 Name                    Stmts   Miss  Cover
 -------------------------------------------
 server/__init__.py          0      0   100%
 server/db_manager.py       34      0   100%
-server/jwks_server.py      40      7    82%
+server/jwks_server.py      46      7    85%
 -------------------------------------------
-TOTAL                      74      7    91%
+TOTAL                      80      7    91%
 ```
 
-## Run the test client
+## Run the test client (Gradebot)
 ```bash
 ./gradebot project2
 ```
