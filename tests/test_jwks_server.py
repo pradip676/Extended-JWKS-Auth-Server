@@ -15,7 +15,7 @@ from server.db_manager import (
     fetch_valid_keys
 )
 
-DATABASE_NAME = "totally_not_my_privateKeys.db"
+DB_FILE = "totally_not_my_privateKeys.db"
 
 
 # Test suite for the JWKS app
@@ -23,28 +23,37 @@ class TestJWKSApp(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        # Initialize the database table once for the test class.
+        """
+        Initialize the database table once for the test class.
+        """
         setup_database()
 
     def setUp(self):
-        # Create a test client and clear the database before each test.
+        """
+        Create a test client and clear the database before each test.
+        """
         self.client = app.test_client()
         self._clear_db()
 
     def tearDown(self):
-        # Clear the database after each test to ensure tests
-        # don't interfere.
+        """
+        Clear the database after each test to ensure tests
+        """
         self._clear_db()
 
     def _clear_db(self):
-        # Helper function to delete all rows from the keys table.
-        with sqlite3.connect(DATABASE_NAME) as conn:
+        """
+        Help to delete all rows from the keys table.
+        """
+        with sqlite3.connect(DB_FILE) as conn:
             conn.execute("DELETE FROM keys")
             conn.commit()
 
     def test_initialize_db(self):
-        # Test that the database table 'keys' is created.
-        with sqlite3.connect(DATABASE_NAME) as conn:
+        """
+        Test that the database table 'keys' is created
+        """
+        with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.execute(
                 "SELECT name FROM sqlite_master WHERE type='table' "
                 "AND name='keys'"
@@ -55,9 +64,11 @@ class TestJWKSApp(unittest.TestCase):
         )
 
     def test_create_and_save_keys(self):
-        # Test that keys are generated and stored in the database.
+        """
+        Test that keys are generated and stored in the database
+        """
         generate_and_save_keys()
-        with sqlite3.connect(DATABASE_NAME) as conn:
+        with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.execute("SELECT COUNT(*) FROM keys")
             count = cursor.fetchone()[0]
         self.assertGreater(
@@ -65,7 +76,9 @@ class TestJWKSApp(unittest.TestCase):
         )
 
     def test_authenticate_user(self):
-        # Test the /auth endpoint for token generation.
+        """
+        Test the /auth endpoint for token generation.
+        """
         generate_and_save_keys()
         payload = {"username": "testuser"}
         response = self.client.post('/auth', json=payload)
@@ -77,7 +90,9 @@ class TestJWKSApp(unittest.TestCase):
         self.assertIn('token', data, "Response should include a token.")
 
     def test_get_jwks(self):
-        # Test that the JWKS endpoint returns valid keys.
+        """
+        Test that the JWKS endpoint returns valid keys.
+        """
         generate_and_save_keys()
         response = self.client.get('/.well-known/jwks.json')
         self.assertEqual(
@@ -95,7 +110,9 @@ class TestJWKSApp(unittest.TestCase):
         )
 
     def test_retrieve_rsa_key(self):
-        # Test retrieval of a valid RSA key from the database.
+        """
+        Test retrieval of a valid RSA key from the database.
+        """
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048
@@ -109,13 +126,17 @@ class TestJWKSApp(unittest.TestCase):
         self.assertIsNotNone(key, "A valid RSA key should be retrieved.")
 
     def test_retrieve_rsa_key_no_valid(self):
-        # Test retrieval when no valid RSA key exists.
+        """
+        Test retrieval when no valid RSA key exists.
+        """
         kid, key = get_rsa_key(get_expired=False)
         self.assertIsNone(kid, "Should return None when no valid key exists.")
         self.assertIsNone(key, "Should return None when no valid key exists.")
 
     def test_store_rsa_key(self):
-        # Test that storing an RSA key increases the count in the database.
+        """
+        Test that storing an RSA key increases the count in the database
+        """
         private_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048
@@ -124,7 +145,7 @@ class TestJWKSApp(unittest.TestCase):
             datetime.datetime.now(datetime.timezone.utc).timestamp()
         ) + 3600
         store_rsa_key(private_key, exp)
-        with sqlite3.connect(DATABASE_NAME) as conn:
+        with sqlite3.connect(DB_FILE) as conn:
             cursor = conn.execute("SELECT COUNT(*) FROM keys")
             count = cursor.fetchone()[0]
         self.assertGreater(
@@ -134,7 +155,9 @@ class TestJWKSApp(unittest.TestCase):
         )
 
     def test_expired_key_retrieval(self):
-        # Test that an expired RSA key is retrieved when requested.
+        """
+        Test that an expired RSA key is retrieved when requested
+        """
         expired_key = rsa.generate_private_key(
             public_exponent=65537,
             key_size=2048
@@ -148,7 +171,9 @@ class TestJWKSApp(unittest.TestCase):
         self.assertIsNotNone(key, "An expired RSA key should be retrieved.")
 
     def test_fetch_valid_keys(self):
-        # Test that fetch_valid_keys returns only unexpired keys.
+        """"
+        Test that fetch_valid_keys returns only unexpired keys
+        """
         now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
         valid_key = rsa.generate_private_key(
             public_exponent=65537,

@@ -10,17 +10,22 @@ from .db_manager import get_rsa_key, fetch_valid_keys
 app = Flask(__name__)
 
 
-# /auth endpoint: creates a JWT token
 @app.route('/auth', methods=['POST'])
 def post_token():
+    """
+    /auth endpoint: creates a JWT token
+    - gets username request
+    - Sign the token with RSA key
+    - Return JWT token or error message
+    """
     if not request.is_json:
         return jsonify({'error': 'Invalid content type'}), 415
 
-    req_body = request.get_json()
+    reqest_body = request.get_json()
     want_expired = request.args.get('expired', 'false').lower() == 'true'
 
     try:
-        username = req_body['username']
+        username = reqest_body['username']
     except KeyError:
         return jsonify({'error': 'Missing username field'}), 400
 
@@ -46,9 +51,11 @@ def post_token():
         return jsonify({'error': 'Token generation failed'}), 500
 
 
-# /well-known/jwks.json endpoint: returns public keys in JWKS format
 @app.route('/.well-known/jwks.json', methods=['GET'])
 def serve_jwks():
+    """
+    /well-known/jwks.json endpoint: returns public keys in JWKS format
+    """
     jwks_keys = []
     # Get all valid (unexpired) keys from the database
     valid_keys = fetch_valid_keys()

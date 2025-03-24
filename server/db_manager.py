@@ -7,8 +7,10 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 DB_FILE = "totally_not_my_privateKeys.db"
 
 
-# Set up SQLite database
 def setup_database():
+    """
+    Set up a database to store RSA keys
+    """
     with sqlite3.connect(DB_FILE) as connection:
         connection.execute(
             '''
@@ -21,9 +23,11 @@ def setup_database():
         )
 
 
-# Store a PEM-encoded RSA key and its expiration timestamp in the database
 def store_rsa_key(rsa_obj, expiry):
-    # Convert RSA obj into PEM format
+    """
+    Store a PEM-encoded RSA key and its expiration timestamp
+    in the database
+    """
     pem_data = rsa_obj.private_bytes(
         encoding=serialization.Encoding.PEM,
         format=serialization.PrivateFormat.TraditionalOpenSSL,
@@ -35,14 +39,15 @@ def store_rsa_key(rsa_obj, expiry):
         )
 
 
-# Retrieve a single RSA key from the database,
-# if get_expired is True, return an expired key,
-# otherwise, return a valid (unexpired) key.
 def get_rsa_key(get_expired=False):
-    # Get current time in UTC
+    """
+    Retrieve a single RSA key from the database,
+    if get_expired is True, return an expired key,
+    otherwise, return a valid (unexpired) key.
+    """
     now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
-    #SQL to select valid or expired keys
+    # SQL to select valid or expired keys
     query = '''
         SELECT kid, key FROM keys
         WHERE exp {} ?
@@ -58,13 +63,18 @@ def get_rsa_key(get_expired=False):
         rsa_key = serialization.load_pem_private_key(
             record[1], password=None
         )
-        return kid, rsa_key # Return key id and secret key obj
-    return None, None # for no key found
+        # Return key id and secret key obj
+        return kid, rsa_key
+    # for no key found
+    return None, None
 
 
-# Generate and store two RSA keys:
-# one valid (expires in 1h) and one expired (expired 1h ago)
 def generate_and_save_keys():
+    """
+    Generate and store two RSA keys:
+    - one valid (expires in 1h)
+    - one expired (expired 1h ago)
+    """
     now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
 
     # Generate RSA private key
@@ -84,12 +94,15 @@ def generate_and_save_keys():
     store_rsa_key(expired_key, now_ts - 3600)
 
 
-# Fetch all valid (unexpired) keys from the database
-# return as a list of (kid, key) tuples
 def fetch_valid_keys():
+    """
+    Fetch all valid (unexpired) keys from the database
+    return as a list of (kid, key) tuples
+    """
     now_ts = int(datetime.datetime.now(datetime.timezone.utc).timestamp())
     with sqlite3.connect(DB_FILE) as connection:
         cursor = connection.execute(
             'SELECT kid, key FROM keys WHERE exp > ?', (now_ts,)
         )
-        return cursor.fetchall() #Return all valid keys
+        # Return all valid keys
+        return cursor.fetchall()
